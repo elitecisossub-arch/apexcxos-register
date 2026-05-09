@@ -27,6 +27,7 @@ export default async function RegisterPage({ params }: Props) {
 
   if (!event) notFound()
   const isOpen = event.registration_open
+  const hasDetails = Boolean(event.event_date || event.event_venue)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f2447] via-[#1B3A6B] to-[#0f2447]">
@@ -43,25 +44,29 @@ export default async function RegisterPage({ params }: Props) {
             </p>
             <h1 className="text-2xl font-bold text-white leading-tight">{event.event_name}</h1>
           </div>
-          <div className="px-6 py-5 space-y-3 border-b border-gray-100">
-            {event.event_date && (
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span>{formatDate(event.event_date)}{event.event_time && ` · ${event.event_time}`}</span>
-              </div>
-            )}
-            {event.event_venue && (
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>{event.event_venue}</span>
-              </div>
-            )}
-          </div>
+
+          {hasDetails && (
+            <div className="px-6 py-5 space-y-3 border-b border-gray-100">
+              {event.event_date && (
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>{formatDate(event.event_date)}{event.event_time && ` · ${event.event_time}`}</span>
+                </div>
+              )}
+              {event.event_venue && (
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>{event.event_venue}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           {event.event_description && (
             <div className="px-6 py-5 border-b border-gray-100">
               <p className="text-sm text-gray-600 whitespace-pre-line">{event.event_description}</p>
