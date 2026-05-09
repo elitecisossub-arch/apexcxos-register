@@ -13,32 +13,71 @@ export async function POST(request: NextRequest) {
 
   const admin = await createAdminClient()
 
+  // 1. Look up event
   const { data: event, error: eventError } = await admin
-    .from('events').select('id, event_name, registration_open, is_active').eq('id', event_id).single()
+    .from('events')
+    .select('id, event_name, registration_open, is_active')
+    .eq('id', event_id)
+    .single()
 
   if (eventError || !event) return NextResponse.json({ error: 'Event not found.' }, { status: 404 })
   if (!event.is_active || !event.registration_open)
     return NextResponse.json({ error: 'Registration for this event is closed.' }, { status: 403 })
 
-  const { data: existing } = await admin
-    .from('invitations').select('id, registration_status').eq('event_id', event_id)
-    .eq('email', email.trim().toLowerCase()).maybeSingle()
+  const cleanEmail = email.trim().toLowerCase()
+  const nowISO = new Date().toISOString()
 
-  if (existing) return NextResponse.json({ duplicate: true, registration_status: existing.registration_status }, { status: 409 })
+  // 2. Duplicate check against invite_management for the same event + email
+  const { data: existing } = await admin
+    .from('invite_management')
+    .select('id, response_status, invitation_status')
+    .eq('event_name', event.event_name)
+    .ilike('email', cleanEmail)
+    .maybeSingle()
+
+  if (existing) {
+    return NextResponse.json(
+      { duplicate: true, registration_status: existing.response_status || existing.invitation_status || 'registered' },
+      { status: 409 }
+    )
+  }
+
+  // 3. Insert into invite_management with the field mapping you described
+  const payload = {
+    invite_by:          'Self-Registration',         // logo placeholder; admin can change later
+    contact_name:       name.trim(),
+    email:              cleanEmail,
+    phone_number:       contact_number?.trim() || null,
+    contact_type:       null,
+    event_name:         event.event_name,
+    invitation_status:  'Opened',                     // they opened + acted on the link
+    invitation_method:  null,
+    sent_date:          nowISO,
+    sent_by:            null,
+    response_status:    null,
+    response_date:      null,
+    response_channel:   null,
+    dietary_requirements: null,
+    special_notes:      null,
+    followup_required:  null,
+    followup_date:      null,
+    last_action_date:   nowISO,
+    title:              title?.trim() || null,
+    organization:       organization?.trim() || null,
+    linkedin_id:        linkedin_id?.trim() || null,
+  }
 
   const { data, error } = await admin
-    .from('invitations')
-    .insert({
-      event_id, name: name.trim(), title: title || null, organization: organization || null,
-      email: email.trim().toLowerCase(), contact_number: contact_number || null,
-      linkedin_id: linkedin_id || null, registration_status: 'registered',
-      registered_via: 'registration_page', consent_given: true,
-    })
-    .select().single()
+    .from('invite_management')
+    .insert(payload)
+    .select()
+    .single()
 
   if (error) {
-    if (error.code === '23505') return NextResponse.json({ duplicate: true, registration_status: 'registered' }, { status: 409 })
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error.code === '23505')
+      return NextResponse.json({ duplicate: true, registration_status: 'registered' }, { status: 409 })
+    console.error('[register] DB error:', error)
+    return NextResponse.json({ error: 'Registration failed. Please try again.' }, { status: 500 })
   }
 
   return NextResponse.json({ data, event_name: event.event_name }, { status: 201 })
