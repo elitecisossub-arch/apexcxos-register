@@ -30,38 +30,54 @@ export default async function RegisterPage({ params }: Props) {
   const hasDetails = Boolean(event.event_date || event.event_venue)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f2447] via-[#1B3A6B] to-[#0f2447]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0a1a35] via-[#1B3A6B] to-[#0f2447]">
+      {/* Decorative blobs */}
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#C9A84C]/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
       {event.event_banner_url && (
-        <div className="w-full max-h-64 overflow-hidden">
+        <div className="relative w-full max-h-64 overflow-hidden">
           <img src={event.event_banner_url} alt={event.event_name} className="w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f2447]/60 to-transparent"/>
         </div>
       )}
-      <div className="max-w-2xl mx-auto px-4 py-10">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8">
-          <div className="bg-[#1B3A6B] px-6 py-5">
-            <p className="text-[#C9A84C] text-xs font-semibold uppercase tracking-widest mb-1">
-              {event.organizer_line || 'ApexCXOs'}
-            </p>
-            <h1 className="text-2xl font-bold text-white leading-tight">{event.event_name}</h1>
+
+      <div className="relative max-w-2xl mx-auto px-4 py-10">
+        {/* Event card */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8 fade-up">
+          <div className="relative bg-gradient-to-r from-[#1B3A6B] via-[#27508f] to-[#1B3A6B] px-6 py-6 overflow-hidden">
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(201,168,76,0.4) 0%, transparent 60%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.15) 0%, transparent 50%)',
+            }}/>
+            <div className="relative">
+              <p className="text-[#C9A84C] text-xs font-semibold uppercase tracking-[0.2em] mb-1">
+                {event.organizer_line || 'ApexCXOs'}
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">{event.event_name}</h1>
+            </div>
           </div>
 
           {hasDetails && (
-            <div className="px-6 py-5 space-y-3 border-b border-gray-100">
+            <div className="px-6 py-5 space-y-3 border-b border-gray-100 bg-gradient-to-b from-white to-gray-50/50">
               {event.event_date && (
-                <div className="flex items-center gap-3 text-sm text-gray-700">
-                  <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span>{formatDate(event.event_date)}{event.event_time && ` · ${event.event_time}`}</span>
+                <div className="flex items-center gap-3 text-sm text-gray-700 transition-transform hover:translate-x-0.5">
+                  <span className="inline-flex w-8 h-8 rounded-lg bg-[#1B3A6B]/10 items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-[#1B3A6B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </span>
+                  <span className="font-medium">{formatDate(event.event_date)}{event.event_time && ` · ${event.event_time}`}</span>
                 </div>
               )}
               {event.event_venue && (
-                <div className="flex items-center gap-3 text-sm text-gray-700">
-                  <svg className="w-4 h-4 text-[#1B3A6B] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{event.event_venue}</span>
+                <div className="flex items-center gap-3 text-sm text-gray-700 transition-transform hover:translate-x-0.5">
+                  <span className="inline-flex w-8 h-8 rounded-lg bg-[#1B3A6B]/10 items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-[#1B3A6B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </span>
+                  <span className="font-medium">{event.event_venue}</span>
                 </div>
               )}
             </div>
@@ -69,15 +85,16 @@ export default async function RegisterPage({ params }: Props) {
 
           {event.event_description && (
             <div className="px-6 py-5 border-b border-gray-100">
-              <p className="text-sm text-gray-600 whitespace-pre-line">{event.event_description}</p>
+              <p className="text-sm text-gray-600 whitespace-pre-line leading-relaxed">{event.event_description}</p>
             </div>
           )}
+
           {event.event_highlights && event.event_highlights.length > 0 && (
             <div className="px-6 py-5">
               <h2 className="text-sm font-semibold text-[#1B3A6B] uppercase tracking-wide mb-3">Highlights</h2>
               <ul className="space-y-2">
                 {event.event_highlights.map((h: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700 transition-all hover:translate-x-1">
                     <svg className="w-4 h-4 text-[#C9A84C] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
@@ -88,15 +105,26 @@ export default async function RegisterPage({ params }: Props) {
             </div>
           )}
         </div>
-        {isOpen ? (
-          <RegistrationForm eventId={event.id} eventName={event.event_name} />
-        ) : (
-          <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
-            <h2 className="text-lg font-bold text-gray-900">Registration Closed</h2>
-            <p className="text-gray-500 text-sm mt-2">Registration for this event is currently closed.</p>
-          </div>
-        )}
+
+        <div className="fade-up" style={{ animationDelay: '120ms' }}>
+          {isOpen ? (
+            <RegistrationForm eventId={event.id} eventName={event.event_name} />
+          ) : (
+            <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
+                <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"/></svg>
+              </div>
+              <h2 className="text-lg font-bold text-gray-900">Registration Closed</h2>
+              <p className="text-gray-500 text-sm mt-2">Registration for this event is currently closed.</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      <style>{`
+        .fade-up { animation: fadeUp 0.5s ease-out both; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </div>
   )
 }
