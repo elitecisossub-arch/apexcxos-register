@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
 
   const admin = await createAdminClient()
 
-  // 1. Look up event
   const { data: event, error: eventError } = await admin
     .from('events')
     .select('id, event_name, registration_open, is_active')
@@ -27,7 +26,6 @@ export async function POST(request: NextRequest) {
   const cleanEmail = email.trim().toLowerCase()
   const nowISO = new Date().toISOString()
 
-  // 2. Duplicate check against invite_management for the same event + email
   const { data: existing } = await admin
     .from('invite_management')
     .select('id, response_status, invitation_status')
@@ -42,15 +40,14 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // 3. Insert into invite_management with the field mapping you described
   const payload = {
-    invite_by:          'Self-Registration',         // logo placeholder; admin can change later
+    invite_by:          'Self',
     contact_name:       name.trim(),
     email:              cleanEmail,
     phone_number:       contact_number?.trim() || null,
     contact_type:       null,
     event_name:         event.event_name,
-    invitation_status:  'Opened',                     // they opened + acted on the link
+    invitation_status:  'Opened',
     invitation_method:  null,
     sent_date:          nowISO,
     sent_by:            null,
